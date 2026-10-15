@@ -4,7 +4,9 @@ const table = (page: import("@playwright/test").Page) => page.locator("table")
 
 test("lists the catalog with prices and momentum", async ({ page }) => {
   await page.goto("/products")
-  await expect(page.getByText("21 products")).toBeVisible()
+  await expect(
+    page.getByRole("main").getByText("21 products", { exact: true })
+  ).toBeVisible()
   await expect(
     table(page).getByRole("link", { name: "Hermès Birkin 30 Togo" })
   ).toBeVisible()
@@ -16,7 +18,9 @@ test("full-text search narrows results and is reflected in the URL", async ({
   await page.goto("/products")
   await page.getByRole("searchbox", { name: "Search products" }).fill("suede")
   await expect(page).toHaveURL(/q=suede/)
-  await expect(page.getByText(/^\d+ products?$/)).not.toHaveText("21 products")
+  await expect(
+    page.getByRole("main").getByText(/^\d+ products?$/)
+  ).not.toHaveText("21 products")
   for (const row of await table(page).locator("tbody tr").all()) {
     await expect(row).toContainText("Suede")
   }
@@ -27,10 +31,14 @@ test("category filter and clear", async ({ page }) => {
   await page.getByRole("combobox", { name: "All categories" }).click()
   await page.getByRole("option", { name: "Watches" }).click()
   await expect(page).toHaveURL(/category=watches/)
-  await expect(page.getByText("5 products")).toBeVisible()
+  await expect(
+    page.getByRole("main").getByText("5 products", { exact: true })
+  ).toBeVisible()
 
   await page.getByRole("button", { name: "Clear" }).click()
-  await expect(page.getByText("21 products")).toBeVisible()
+  await expect(
+    page.getByRole("main").getByText("21 products", { exact: true })
+  ).toBeVisible()
 })
 
 test("sorting by price ascending puts the cheapest first", async ({ page }) => {
@@ -53,12 +61,16 @@ test("sorting by price ascending puts the cheapest first", async ({ page }) => {
 
 test("empty state for no matches", async ({ page }) => {
   await page.goto("/products?q=zzzznotaproduct")
-  await expect(page.getByText("No matching products")).toBeVisible()
+  await expect(
+    page.getByRole("main").getByText("No matching products", { exact: true })
+  ).toBeVisible()
 })
 
 test("invalid sort params fall back to defaults", async ({ page }) => {
   await page.goto("/products?sort=;drop table&dir=sideways")
-  await expect(page.getByText("21 products")).toBeVisible()
+  await expect(
+    page.getByRole("main").getByText("21 products", { exact: true })
+  ).toBeVisible()
 })
 
 test("product detail shows chart, stats, observations and insights", async ({
@@ -88,5 +100,7 @@ test("product detail shows chart, stats, observations and insights", async ({
 
 test("unknown product shows not found", async ({ page }) => {
   await page.goto("/products/does-not-exist")
-  await expect(page.getByText("Product not found")).toBeVisible()
+  await expect(
+    page.getByRole("main").getByText("Product not found", { exact: true })
+  ).toBeVisible()
 })
