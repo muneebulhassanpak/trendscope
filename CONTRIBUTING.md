@@ -67,6 +67,7 @@ calls `requireAdminArea()`, and every action calls `authorizeWrite()`; RLS enfor
 - Server components by default; add `"use client"` only for interactivity, at the leaf.
 - Pages: `<PageHeader title description actions? />` first, then content. Export `metadata`.
 - Use shadcn primitives from `@/components/ui` with base-ui `render` props (not `asChild`).
+  A `Button` that renders a `Link` needs `nativeButton={false}`.
 - Format every number and date with `@/lib/format` — never inline `toFixed` or `toLocaleString`.
 - Price change: `<ChangeBadge value={pct} />` (green up, red down, with an arrow icon — never color alone).
 - Empty, loading and error states are required for every data view (`<Empty>`, `loading.tsx`, `error.tsx`).
