@@ -10,7 +10,6 @@ import {
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -25,6 +24,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty"
+import { ButtonLink } from "@/components/shared/button-link"
 import { ChangeBadge } from "@/components/shared/change-badge"
 import { ProductSwatch } from "@/components/shared/product-swatch"
 import { PriceHistoryChart } from "@/features/products/components/price-history-chart"
@@ -103,14 +103,13 @@ export default async function ProductPage({
             </div>
           </div>
         </div>
-        <Button
+        <ButtonLink
           variant="outline"
-          nativeButton={false}
-          render={<Link href={`/compare?products=${product.slug}`} />}
+          href={`/compare?products=${product.slug}`}
         >
           <GitCompareArrowsIcon />
           Compare
-        </Button>
+        </ButtonLink>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

@@ -11,8 +11,10 @@ export function ChangeBadge({
   value: number | null | undefined
   className?: string
 }) {
+  // Direction follows the displayed (1-decimal) value so "0.0%" never shows an arrow.
+  const shown = value == null ? null : Math.round(value * 10) / 10
   const direction =
-    value == null || value === 0 ? "flat" : value > 0 ? "up" : "down"
+    shown == null || shown === 0 ? "flat" : shown > 0 ? "up" : "down"
   const Icon =
     direction === "up"
       ? ArrowUpRightIcon
@@ -38,7 +40,7 @@ export function ChangeBadge({
             ? "Down"
             : "Unchanged"}
       </span>
-      {formatPercent(value)}
+      {formatPercent(shown === 0 ? 0 : value)}
     </span>
   )
 }

@@ -1,4 +1,3 @@
-import Link from "next/link"
 import {
   ArrowRightIcon,
   TrendingDownIcon,
@@ -6,7 +5,6 @@ import {
   type LucideIcon,
 } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardAction,
@@ -22,6 +20,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty"
+import { ButtonLink } from "@/components/shared/button-link"
 import { formatNumber, formatShortDate } from "@/lib/format"
 import { cn } from "@/lib/utils"
 import type { TrendHighlights, TrendSignal } from "@/features/dashboard/types"
@@ -48,15 +47,15 @@ export function TrendHighlightsCard({
           {periodDate && <> · week of {formatShortDate(periodDate)}</>}
         </CardDescription>
         <CardAction>
-          <Button
+          <ButtonLink
             variant="ghost"
             size="sm"
-            nativeButton={false}
-            render={<Link href="/trends" aria-label="View all trends" />}
+            href="/trends"
+            aria-label="View all trends"
           >
             Trends
             <ArrowRightIcon data-icon="inline-end" />
-          </Button>
+          </ButtonLink>
         </CardAction>
       </CardHeader>
       <CardContent className="flex flex-1 flex-col gap-5">

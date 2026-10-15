@@ -54,9 +54,7 @@ test("picker adds products and remove buttons drop them", async ({ page }) => {
   )
   await expect(addButton(page)).toBeHidden()
 
-  await page
-    .getByRole("button", { name: "Remove Hermès Kelly 28 Epsom" })
-    .click()
+  await page.getByRole("link", { name: "Remove Hermès Kelly 28 Epsom" }).click()
   await expect(page).toHaveURL(
     /products=rolex-submariner-126610ln,nike-dunk-low-panda$/
   )
@@ -86,7 +84,7 @@ test("chart period toggle and product detail entry point", async ({ page }) => {
   await page.goto("/products/hermes-kelly-28-epsom")
   await page
     .getByRole("main")
-    .getByRole("button", { name: "Compare", exact: true })
+    .getByRole("link", { name: "Compare", exact: true })
     .click()
   await expect(page).toHaveURL(/\/compare\?products=hermes-kelly-28-epsom$/)
   await expect(page.locator("[data-slot=chart] .recharts-line")).toBeVisible()

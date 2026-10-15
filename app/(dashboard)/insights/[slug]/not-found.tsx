@@ -1,7 +1,5 @@
-import Link from "next/link"
 import { FileQuestionIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
 import {
   Empty,
   EmptyContent,
@@ -10,6 +8,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty"
+import { ButtonLink } from "@/components/shared/button-link"
 
 export default function InsightNotFound() {
   return (
@@ -24,9 +23,7 @@ export default function InsightNotFound() {
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <Button nativeButton={false} render={<Link href="/insights" />}>
-          Browse insights
-        </Button>
+        <ButtonLink href="/insights">Browse insights</ButtonLink>
       </EmptyContent>
     </Empty>
   )
