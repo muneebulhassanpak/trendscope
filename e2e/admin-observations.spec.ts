@@ -11,7 +11,9 @@ const SOURCE = "Secondary market mid-year report"
 const marker = uniqueMarker()
 test.afterAll(() => deleteTestRows(marker))
 
-const dialog = (page: Page) => page.getByRole("dialog")
+// Scoped by title: the pickers inside open popovers that also have role="dialog".
+const dialog = (page: Page) =>
+  page.getByRole("dialog", { name: /^(New|Edit) observation$/ })
 const table = (page: Page) => page.getByRole("main").getByRole("table")
 
 async function pickProduct(page: Page, search: string, name: string) {

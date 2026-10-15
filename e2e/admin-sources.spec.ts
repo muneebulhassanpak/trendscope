@@ -8,7 +8,9 @@ const DEMO_MESSAGE = "Demo mode is read-only"
 const marker = uniqueMarker()
 test.afterAll(() => deleteTestRows(marker))
 
-const dialog = (page: Page) => page.getByRole("dialog")
+// Scoped by title so popovers (also role="dialog") never match.
+const dialog = (page: Page) =>
+  page.getByRole("dialog", { name: /^(New|Edit) source$/ })
 const table = (page: Page) => page.getByRole("main").getByRole("table")
 
 async function search(page: Page, text: string) {

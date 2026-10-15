@@ -119,7 +119,7 @@ export function SyncHistory({ logs }: { logs: SyncLog[] }) {
                   ` · ${formatNumber(log.records_updated)} pts`}
               </span>
             </div>
-            {log.error && <Details log={log} />}
+            {(log.error || log.status === "failed") && <Details log={log} />}
           </li>
         ))}
       </ul>
@@ -155,6 +155,13 @@ function Details({ log }: { log: SyncLog }) {
           {log.error}
         </pre>
       </details>
+    )
+  }
+  if (log.status === "failed") {
+    return (
+      <span className="text-destructive">
+        Failed · error details are visible to administrators
+      </span>
     )
   }
   if (log.status === "running") {
