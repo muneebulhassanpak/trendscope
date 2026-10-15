@@ -1,21 +1,38 @@
-# Next.js template
+# TrendScope
 
-This is a Next.js template with shadcn/ui.
+Market intelligence dashboard — Next.js, shadcn/ui, Supabase.
 
-## Adding components
-
-To add components to your app, run the following command:
+## Local setup
 
 ```bash
-npx shadcn@latest add button
+npm install
+npm run db:start        # local Supabase (Docker); prints URL + keys
+cp .env.example .env.local   # fill with values from `npx supabase status`
+npm run dev
 ```
 
-This will place the ui components in the `components` directory.
+## Database workflow
 
-## Using components
+The remote database is **never changed by hand**. Every schema change is a migration that goes through a PR.
 
-To use the components in your app, import them as follows:
+1. Branch off `main`: `git checkout -b feat/<name>`
+2. Create a migration: `npm run db:new <name>` → edit `supabase/migrations/<timestamp>_<name>.sql`
+   (or change the schema in local Studio and run `npm run db:diff <name>`)
+3. Apply locally: `npm run db:reset` (rebuilds local DB from all migrations + `supabase/seed.sql`)
+4. Regenerate types: `npm run db:types`
+5. Open a PR → **CI** runs lint, typecheck, build, and replays every migration on a fresh Postgres
+6. Merge to `main` → **Deploy database** runs `supabase db push` against the remote project
 
-```tsx
-import { Button } from "@/components/ui/button";
+### Required GitHub secrets (environment: `production`)
+
+| Secret | Where to find it |
+| --- | --- |
+| `SUPABASE_ACCESS_TOKEN` | supabase.com → Account → Access Tokens |
+| `SUPABASE_PROJECT_ID` | Project Settings → General → Project ID |
+| `SUPABASE_DB_PASSWORD` | The database password set when creating the project |
+
+## Adding UI components
+
+```bash
+npx shadcn@latest add <component>
 ```
