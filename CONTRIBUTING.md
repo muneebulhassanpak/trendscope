@@ -100,5 +100,5 @@ calls `requireAdminArea()`, and every action calls `authorizeWrite()`; RLS enfor
 
 - `npm run lint && npm run typecheck && npm run build` must pass.
 - Add or update a Playwright spec in `e2e/` for every user-facing feature (`*.mobile.spec.ts` for
-  mobile-only checks). Run with `npm run test:e2e` against the local stack.
+  mobile-only checks). Run with `npm run test:e2e` against the local stack (`E2E_PORT=3100` to use another port).
 - One feature per branch (`feat/<name>`), one PR, squash-merged after CI is green.
