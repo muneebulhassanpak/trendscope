@@ -27,3 +27,15 @@ for (const { link, heading } of marketPages) {
     await expect(page).toHaveTitle(`${heading} · TrendScope`)
   })
 }
+
+test("unknown routes show the branded 404", async ({ page }) => {
+  const response = await page.goto("/this-page-does-not-exist")
+  expect(response?.status()).toBe(404)
+  await expect(
+    page.getByRole("main").getByText("Page not found", { exact: true })
+  ).toBeVisible()
+  await page.getByRole("link", { name: "Back to the dashboard" }).click()
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Dashboard" })
+  ).toBeVisible()
+})

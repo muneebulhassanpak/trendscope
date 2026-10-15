@@ -533,6 +533,13 @@ export type Database = {
       }
     }
     Functions: {
+      get_sync_log_errors: {
+        Args: { log_ids: number[] }
+        Returns: {
+          error: string
+          id: number
+        }[]
+      }
       has_admin_access: { Args: Record<PropertyKey, never>; Returns: boolean }
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean }
       refresh_trend_snapshots: { Args: { weeks?: number }; Returns: number }
