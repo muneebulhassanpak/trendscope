@@ -16,7 +16,7 @@
     "db:new": "supabase migration new",
     "db:diff": "supabase db diff -f",
     "db:lint": "supabase db lint",
-    "db:types": "supabase gen types typescript --local > lib/database.types.ts"
+    "db:types": "supabase gen types typescript --db-url postgresql://postgres:postgres@127.0.0.1:54322/postgres --schema public > lib/database.types.ts && prettier --write lib/database.types.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
