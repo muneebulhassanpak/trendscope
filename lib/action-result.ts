@@ -3,6 +3,8 @@ export type ActionResult<T = undefined> =
   | { ok: true; data: T; message?: string }
   | { ok: false; error: string; fieldErrors?: Record<string, string[]> }
 
+export type ActionFailure = Extract<ActionResult, { ok: false }>
+
 export function ok<T>(data: T, message?: string): ActionResult<T> {
   return { ok: true, data, message }
 }
@@ -10,6 +12,6 @@ export function ok<T>(data: T, message?: string): ActionResult<T> {
 export function fail(
   error: string,
   fieldErrors?: Record<string, string[]>
-): ActionResult<never> {
+): ActionFailure {
   return { ok: false, error, fieldErrors }
 }

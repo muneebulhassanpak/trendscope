@@ -3,7 +3,7 @@ import "server-only"
 import { redirect } from "next/navigation"
 import { cache } from "react"
 
-import { fail, type ActionResult } from "@/lib/action-result"
+import { fail, type ActionFailure } from "@/lib/action-result"
 import { createClient } from "@/lib/supabase/server"
 import type { Database } from "@/lib/supabase/database.types"
 
@@ -56,7 +56,7 @@ export async function requireAdminArea(): Promise<Viewer> {
 
 /** Guard for mutations. Only real admins may write. */
 export async function authorizeWrite(): Promise<
-  { ok: true; viewer: Viewer } | ActionResult<never>
+  { ok: true; viewer: Viewer } | ActionFailure
 > {
   const viewer = await getViewer()
   if (!viewer) return fail("You need to sign in.")
