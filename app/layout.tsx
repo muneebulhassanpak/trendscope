@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 
@@ -40,6 +41,7 @@ export default function RootLayout({
       <body>
         <ThemeProvider defaultTheme="dark">
           <TooltipProvider>{children}</TooltipProvider>
+          <Toaster richColors closeButton />
         </ThemeProvider>
       </body>
     </html>

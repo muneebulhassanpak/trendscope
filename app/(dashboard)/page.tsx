@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { PageHeader } from "@/components/page-header"
+import { PageHeader } from "@/components/shared/page-header"
 
 const kpis = [
   "Tracked products",

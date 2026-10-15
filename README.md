@@ -8,6 +8,7 @@ Market intelligence dashboard — Next.js, shadcn/ui, Supabase.
 npm install
 npm run db:start        # local Supabase (Docker); prints URL + keys
 cp .env.example .env.local   # fill with values from `npx supabase status`
+npm run data:seed       # market data sync + demo account + editorial content
 npm run dev
 ```
 
@@ -25,11 +26,15 @@ The remote database is **never changed by hand**. Every schema change is a migra
 
 ### Required GitHub secrets (environment: `production`)
 
-| Secret | Where to find it |
-| --- | --- |
-| `SUPABASE_ACCESS_TOKEN` | supabase.com → Account → Access Tokens |
-| `SUPABASE_PROJECT_ID` | Project Settings → General → Project ID |
-| `SUPABASE_DB_PASSWORD` | The database password set when creating the project |
+| Secret                  | Where to find it                                    |
+| ----------------------- | --------------------------------------------------- |
+| `SUPABASE_ACCESS_TOKEN` | supabase.com → Account → Access Tokens              |
+| `SUPABASE_PROJECT_ID`   | Project Settings → General → Project ID             |
+| `SUPABASE_DB_PASSWORD`  | The database password set when creating the project |
+
+## Conventions
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for architecture, data access, auth and UI rules.
 
 ## Adding UI components
 
