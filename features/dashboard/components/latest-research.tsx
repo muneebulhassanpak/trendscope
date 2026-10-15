@@ -2,7 +2,6 @@ import Link from "next/link"
 import { ArrowRightIcon, NewspaperIcon, NotebookPenIcon } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardAction,
@@ -18,6 +17,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty"
+import { ButtonLink } from "@/components/shared/button-link"
 import { formatDate } from "@/lib/format"
 import type {
   LatestArticle,
@@ -31,15 +31,15 @@ export function LatestArticles({ articles }: { articles: LatestArticle[] }) {
         <CardTitle>Latest insights</CardTitle>
         <CardDescription>Research reports from the team</CardDescription>
         <CardAction>
-          <Button
+          <ButtonLink
             variant="ghost"
             size="sm"
-            nativeButton={false}
-            render={<Link href="/insights" aria-label="View all insights" />}
+            href="/insights"
+            aria-label="View all insights"
           >
             View all
             <ArrowRightIcon data-icon="inline-end" />
-          </Button>
+          </ButtonLink>
         </CardAction>
       </CardHeader>
       <CardContent className="flex flex-1 flex-col">

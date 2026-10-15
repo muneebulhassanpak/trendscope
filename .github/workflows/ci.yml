@@ -62,6 +62,8 @@ jobs:
             echo "SUPABASE_SECRET_KEY=$SECRET_KEY"
             echo "DEMO_USER_EMAIL=demo@trendscope.dev"
             echo "DEMO_USER_PASSWORD=$(openssl rand -hex 16)"
+            echo "ADMIN_EMAIL=admin@trendscope.dev"
+            echo "ADMIN_PASSWORD=$(openssl rand -hex 16)"
           } > .env.local
       - name: Seed demo data through the sync pipeline
         run: npm run data:seed

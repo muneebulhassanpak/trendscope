@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { XIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
+import { ButtonLink } from "@/components/shared/button-link"
 import { ProductSwatch } from "@/components/shared/product-swatch"
 import { ProductPicker } from "@/features/compare/components/product-picker"
 import {
@@ -52,23 +52,16 @@ export function SelectedProducts({
               {product.brand_name} · {product.category_name}
             </div>
           </div>
-          <Button
+          <ButtonLink
             variant="ghost"
             size="icon-sm"
-            nativeButton={false}
             aria-label={`Remove ${product.name}`}
-            render={
-              <Link
-                href={compareHref(
-                  slugs.filter((slug) => slug !== product.slug)
-                )}
-                scroll={false}
-                replace
-              />
-            }
+            href={compareHref(slugs.filter((slug) => slug !== product.slug))}
+            scroll={false}
+            replace
           >
             <XIcon />
-          </Button>
+          </ButtonLink>
         </li>
       ))}
       {products.length < MAX_COMPARED_PRODUCTS && (

@@ -1,7 +1,6 @@
 import Link from "next/link"
 import { ArrowRightIcon, type LucideIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardAction,
@@ -17,6 +16,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty"
+import { ButtonLink } from "@/components/shared/button-link"
 import { ChangeBadge } from "@/components/shared/change-badge"
 import { ProductSwatch } from "@/components/shared/product-swatch"
 import { Sparkline } from "@/components/shared/sparkline"
@@ -45,20 +45,15 @@ export function MoverList({
         <CardTitle>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
         <CardAction>
-          <Button
+          <ButtonLink
             variant="ghost"
             size="sm"
-            nativeButton={false}
-            render={
-              <Link
-                href={href}
-                aria-label={`View all ${title.toLowerCase()}`}
-              />
-            }
+            href={href}
+            aria-label={`View all ${title.toLowerCase()}`}
           >
             View all
             <ArrowRightIcon data-icon="inline-end" />
-          </Button>
+          </ButtonLink>
         </CardAction>
       </CardHeader>
       <CardContent>

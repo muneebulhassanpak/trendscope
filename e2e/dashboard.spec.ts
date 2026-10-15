@@ -64,7 +64,7 @@ test("top movers link to product pages", async ({ page }) => {
 
 test("view all movers opens the sorted product list", async ({ page }) => {
   await page.goto("/")
-  await main(page).getByRole("button", { name: "View all top losers" }).click()
+  await main(page).getByRole("link", { name: "View all top losers" }).click()
   await expect(page).toHaveURL(/\/products\?sort=change_30d_pct&dir=asc$/)
 })
 
@@ -80,7 +80,7 @@ test("trending now shows rising and cooling attributes", async ({ page }) => {
     main(page).getByText("Cooling off", { exact: true })
   ).toBeVisible()
 
-  await main(page).getByRole("button", { name: "View all trends" }).click()
+  await main(page).getByRole("link", { name: "View all trends" }).click()
   await expect(page).toHaveURL(/\/trends$/)
 })
 

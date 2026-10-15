@@ -82,9 +82,9 @@
     --positive: #006300;
     --negative: #d03b3b;
     /* Diverging scale (blue ↔ gray ↔ red), validated per theme */
-    --diverging-low: #1c5cab;
+    --diverging-low: #a8291f;
     --diverging-mid: #f0efec;
-    --diverging-high: #a8291f;
+    --diverging-high: #1c5cab;
     --radius: 0.625rem;
     --sidebar: oklch(0.985 0 0);
     --sidebar-foreground: oklch(0.145 0 0);
@@ -125,9 +125,9 @@
     --chart-8: #e66767;
     --positive: #0ca30c;
     --negative: #e66767;
-    --diverging-low: #5598e7;
+    --diverging-low: #e66767;
     --diverging-mid: #383835;
-    --diverging-high: #e66767;
+    --diverging-high: #5598e7;
     --sidebar: oklch(0.205 0 0);
     --sidebar-foreground: oklch(0.985 0 0);
     --sidebar-primary: oklch(0.488 0.243 264.376);
