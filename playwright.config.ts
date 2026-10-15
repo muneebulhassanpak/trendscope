@@ -26,12 +26,20 @@ export default defineConfig({
     {
       name: "desktop",
       use: { ...devices["Desktop Chrome"] },
-      testIgnore: /.*\.mobile\.spec\.ts/,
+      testIgnore: [/.*\.mobile\.spec\.ts/, /admin-articles\.spec\.ts/],
     },
     {
       name: "mobile",
       use: { ...devices["Pixel 7"] },
       testMatch: /.*\.mobile\.spec\.ts/,
+    },
+    {
+      // Publishes temporary articles, which would change the seeded content
+      // other specs assert on — so it runs only after they finish.
+      name: "cms",
+      use: { ...devices["Desktop Chrome"] },
+      testMatch: /admin-articles\.spec\.ts/,
+      dependencies: ["desktop", "mobile"],
     },
   ],
   webServer: {
