@@ -1,5 +1,6 @@
 import "server-only"
 
+import { escapeLike } from "@/lib/supabase/escape-like"
 import { createClient } from "@/lib/supabase/server"
 import type { ArticleFilters } from "@/features/articles/schemas"
 import type {
@@ -7,11 +8,6 @@ import type {
   ArticleProductOption,
   EditableArticle,
 } from "@/features/articles/types"
-
-/** Escapes LIKE wildcards so a search term matches literally. */
-function likePattern(term: string) {
-  return `%${term.replace(/[\\%_]/g, "\\$&")}%`
-}
 
 /**
  * Articles for the admin list, most recently edited first. The search runs in
@@ -29,7 +25,7 @@ export async function listArticles(
       "id, title, slug, status, published_at, updated_at, author:profiles(full_name, email), article_products(count)"
     )
     .order("updated_at", { ascending: false })
-  if (filters.q) query = query.ilike("title", likePattern(filters.q))
+  if (filters.q) query = query.ilike("title", `%${escapeLike(filters.q)}%`)
 
   const { data, error } = await query
   if (error) throw error

@@ -1,7 +1,6 @@
 "use client"
 
-import { useActionState, useEffect, useRef, useState } from "react"
-import { useFormStatus } from "react-dom"
+import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import {
@@ -12,7 +11,6 @@ import {
   SendIcon,
   type LucideIcon,
 } from "lucide-react"
-import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -33,7 +31,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { Textarea } from "@/components/ui/textarea"
 import { ButtonLink } from "@/components/shared/button-link"
 import { PageHeader } from "@/components/shared/page-header"
-import type { ActionResult } from "@/lib/action-result"
+import { useFormAction } from "@/hooks/use-form-action"
 import { formatDate, formatNumber } from "@/lib/format"
 import { cn } from "@/lib/utils"
 import { saveArticle } from "@/features/articles/actions"
@@ -83,10 +81,6 @@ function fingerprint(values: Values) {
   ])
 }
 
-function errorsFor(messages: string[] | undefined) {
-  return messages?.map((message) => ({ message }))
-}
-
 export function ArticleEditor({
   article,
   productOptions,
@@ -105,25 +99,27 @@ export function ArticleEditor({
   // A new article's slug follows its title until the slug is edited by hand.
   const [slugEdited, setSlugEdited] = useState(article !== null)
 
-  const [state, formAction] = useActionState(
-    async (previous: ActionResult<SavedArticle> | null, formData: FormData) => {
-      const result = await saveArticle(previous, formData)
-      if (!result.ok) {
-        toast.error(result.error)
-        return result
-      }
-      toast.success(result.message)
-      setSaved(toValues(result.data))
-      setPublication({
-        status: result.data.status,
-        publishedAt: result.data.published_at,
-      })
-      if (!article) router.replace(`/admin/articles/${result.data.id}/edit`)
-      return result
-    },
-    null
+  // Which submit button is saving, for its spinner (also set by ⌘S).
+  const [submitting, setSubmitting] = useState<ArticleIntent>("save")
+
+  const { pending, onSubmit, fieldErrors, errorsFor } = useFormAction(
+    saveArticle,
+    {
+      onSuccess(data) {
+        setSaved(toValues(data))
+        setPublication({ status: data.status, publishedAt: data.published_at })
+        if (!article) router.replace(`/admin/articles/${data.id}/edit`)
+      },
+    }
   )
-  const fieldErrors = state?.ok === false ? state.fieldErrors : undefined
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    const submitter = (event.nativeEvent as SubmitEvent).submitter
+    if (submitter instanceof HTMLButtonElement) {
+      setSubmitting(submitter.value as ArticleIntent)
+    }
+    onSubmit(event)
+  }
 
   const dirty = fingerprint(values) !== fingerprint(saved)
   const published = publication.status === "published"
@@ -174,7 +170,7 @@ export function ArticleEditor({
   return (
     <form
       ref={formRef}
-      action={formAction}
+      onSubmit={handleSubmit}
       noValidate
       className="flex flex-col gap-6"
     >
@@ -213,21 +209,39 @@ export function ArticleEditor({
               <>
                 <SubmitButton
                   intent="unpublish"
+                  pending={pending}
+                  submitting={submitting}
                   icon={EyeOffIcon}
                   variant="outline"
                 >
                   Unpublish
                 </SubmitButton>
-                <SubmitButton intent="save" icon={SaveIcon}>
+                <SubmitButton
+                  intent="save"
+                  icon={SaveIcon}
+                  pending={pending}
+                  submitting={submitting}
+                >
                   Update
                 </SubmitButton>
               </>
             ) : (
               <>
-                <SubmitButton intent="save" icon={SaveIcon} variant="outline">
+                <SubmitButton
+                  intent="save"
+                  icon={SaveIcon}
+                  variant="outline"
+                  pending={pending}
+                  submitting={submitting}
+                >
                   Save draft
                 </SubmitButton>
-                <SubmitButton intent="publish" icon={SendIcon}>
+                <SubmitButton
+                  intent="publish"
+                  icon={SendIcon}
+                  pending={pending}
+                  submitting={submitting}
+                >
                   Publish
                 </SubmitButton>
               </>
@@ -256,7 +270,7 @@ export function ArticleEditor({
               aria-invalid={!!fieldErrors?.title}
               className="h-10 text-base font-medium md:text-base"
             />
-            <FieldError errors={errorsFor(fieldErrors?.title)} />
+            <FieldError errors={errorsFor("title")} />
           </Field>
 
           <Field data-invalid={!!fieldErrors?.slug}>
@@ -279,7 +293,7 @@ export function ArticleEditor({
                 className="font-mono md:text-[13px]"
               />
             </InputGroup>
-            <FieldError errors={errorsFor(fieldErrors?.slug)} />
+            <FieldError errors={errorsFor("slug")} />
             <FieldDescription
               id="slug-hint"
               className={cn(fieldErrors?.slug && "sr-only")}
@@ -302,7 +316,7 @@ export function ArticleEditor({
               onChange={(productIds) => update({ productIds })}
               invalid={!!fieldErrors?.productIds}
             />
-            <FieldError errors={errorsFor(fieldErrors?.productIds)} />
+            <FieldError errors={errorsFor("productIds")} />
           </Field>
 
           <Field
@@ -326,7 +340,7 @@ export function ArticleEditor({
               aria-invalid={!!fieldErrors?.excerpt}
               className="min-h-16 resize-none"
             />
-            <FieldError errors={errorsFor(fieldErrors?.excerpt)} />
+            <FieldError errors={errorsFor("excerpt")} />
           </Field>
         </FieldGroup>
       </div>
@@ -342,7 +356,7 @@ export function ArticleEditor({
           invalid={!!fieldErrors?.body}
           describedBy={fieldErrors?.body ? "body-error" : undefined}
         />
-        <FieldError id="body-error" errors={errorsFor(fieldErrors?.body)} />
+        <FieldError id="body-error" errors={errorsFor("body")} />
       </div>
     </form>
   )
@@ -379,15 +393,17 @@ function SubmitButton({
   intent,
   icon: Icon,
   variant,
+  pending,
+  submitting,
   children,
 }: {
   intent: ArticleIntent
   icon: LucideIcon
   variant?: "default" | "outline"
+  pending: boolean
+  submitting: ArticleIntent
   children: React.ReactNode
 }) {
-  const { pending, data } = useFormStatus()
-  const active = pending && data?.get("intent") === intent
   return (
     <Button
       type="submit"
@@ -396,7 +412,7 @@ function SubmitButton({
       variant={variant}
       disabled={pending}
     >
-      {active ? (
+      {pending && submitting === intent ? (
         <Spinner data-icon="inline-start" />
       ) : (
         <Icon data-icon="inline-start" />

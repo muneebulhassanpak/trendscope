@@ -1,7 +1,6 @@
 "use client"
 
-import { useEffect, useOptimistic, useState, useTransition } from "react"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { startTransition, useOptimistic } from "react"
 import { SearchIcon } from "lucide-react"
 
 import {
@@ -11,6 +10,7 @@ import {
 } from "@/components/ui/input-group"
 import { Spinner } from "@/components/ui/spinner"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { useUrlFilters } from "@/hooks/use-url-filters"
 import { formatNumber } from "@/lib/format"
 import {
   ARTICLE_STATUS_FILTERS,
@@ -18,6 +18,8 @@ import {
   type ArticleStatusFilter,
 } from "@/features/articles/schemas"
 import type { ArticleList } from "@/features/articles/types"
+
+const STATUSES = Object.keys(ARTICLE_STATUS_FILTERS) as ArticleStatusFilter[]
 
 /** Status segments and a debounced title search, both kept in the URL. */
 export function ArticleFilters({
@@ -27,38 +29,16 @@ export function ArticleFilters({
   filters: ArticleFilters
   counts: ArticleList["counts"]
 }) {
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const [pending, startTransition] = useTransition()
+  const { pending, query, setQuery, update } = useUrlFilters()
+  // Highlights the chosen segment immediately while the list reloads.
   const [status, setOptimisticStatus] = useOptimistic(filters.status)
-  const [query, setQuery] = useState(filters.q ?? "")
 
-  function update(changes: Record<string, string | null>) {
-    const params = new URLSearchParams(searchParams.toString())
-    for (const [key, value] of Object.entries(changes)) {
-      if (value) params.set(key, value)
-      else params.delete(key)
-    }
-    const search = params.toString()
+  function selectStatus(next: ArticleStatusFilter) {
     startTransition(() => {
-      if ("status" in changes) {
-        setOptimisticStatus((changes.status ?? "all") as ArticleStatusFilter)
-      }
-      router.replace(search ? `${pathname}?${search}` : pathname, {
-        scroll: false,
-      })
+      setOptimisticStatus(next)
+      update({ status: next === "all" ? null : next })
     })
   }
-
-  // Debounce free-text search into the URL.
-  useEffect(() => {
-    const current = searchParams.get("q") ?? ""
-    if (query.trim() === current) return
-    const timeout = setTimeout(() => update({ q: query.trim() || null }), 300)
-    return () => clearTimeout(timeout)
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- only react to typing
-  }, [query])
 
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -69,25 +49,23 @@ export function ArticleFilters({
         value={[status]}
         onValueChange={(value) => {
           const next = value[0] as ArticleStatusFilter | undefined
-          if (next) update({ status: next === "all" ? null : next })
+          if (next) selectStatus(next)
         }}
         aria-label="Filter by status"
         className="w-full sm:w-fit"
       >
-        {(Object.keys(ARTICLE_STATUS_FILTERS) as ArticleStatusFilter[]).map(
-          (key) => (
-            <ToggleGroupItem
-              key={key}
-              value={key}
-              className="flex-1 gap-1.5 px-3 sm:flex-none"
-            >
-              {ARTICLE_STATUS_FILTERS[key]}
-              <span className="text-xs text-muted-foreground tabular-nums">
-                {formatNumber(counts[key])}
-              </span>
-            </ToggleGroupItem>
-          )
-        )}
+        {STATUSES.map((key) => (
+          <ToggleGroupItem
+            key={key}
+            value={key}
+            className="flex-1 gap-1.5 px-3 sm:flex-none"
+          >
+            {ARTICLE_STATUS_FILTERS[key]}
+            <span className="text-xs text-muted-foreground tabular-nums">
+              {formatNumber(counts[key])}
+            </span>
+          </ToggleGroupItem>
+        ))}
       </ToggleGroup>
 
       <InputGroup className="sm:max-w-xs">

@@ -40,8 +40,6 @@ export async function saveArticle(
 ): Promise<ActionResult<SavedArticle>> {
   const auth = await authorizeWrite()
   if (!auth.ok) return auth
-  // `authorizeWrite`'s success branch always carries the viewer; this narrows the type.
-  if (!("viewer" in auth)) return fail(SAVE_FAILED)
 
   const parsed = articleInputSchema.safeParse(readArticleForm(formData))
   if (!parsed.success) {

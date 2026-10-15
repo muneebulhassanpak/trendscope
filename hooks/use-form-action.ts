@@ -40,7 +40,12 @@ export function useFormAction<T>(
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    const formData = new FormData(event.currentTarget)
+    // Include the clicked submit button's name/value (e.g. `intent`), as a
+    // native submission would.
+    const formData = new FormData(
+      event.currentTarget,
+      (event.nativeEvent as SubmitEvent).submitter
+    )
     startTransition(() => dispatch(formData))
   }
 
