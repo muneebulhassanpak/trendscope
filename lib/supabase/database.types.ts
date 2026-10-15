@@ -35,6 +35,13 @@ export type Database = {
             foreignKeyName: "article_products_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
+            referencedRelation: "product_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "article_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
             referencedRelation: "products"
             referencedColumns: ["id"]
           },
@@ -213,6 +220,13 @@ export type Database = {
             foreignKeyName: "observations_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
+            referencedRelation: "product_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "observations_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
             referencedRelation: "products"
             referencedColumns: ["id"]
           },
@@ -249,6 +263,13 @@ export type Database = {
             foreignKeyName: "price_history_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
+            referencedRelation: "product_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "price_history_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
             referencedRelation: "products"
             referencedColumns: ["id"]
           },
@@ -260,6 +281,7 @@ export type Database = {
           category_id: string
           color: string | null
           created_at: string
+          description: string | null
           external_id: string | null
           id: string
           image_url: string | null
@@ -277,6 +299,7 @@ export type Database = {
           category_id: string
           color?: string | null
           created_at?: string
+          description?: string | null
           external_id?: string | null
           id?: string
           image_url?: string | null
@@ -293,6 +316,7 @@ export type Database = {
           category_id?: string
           color?: string | null
           created_at?: string
+          description?: string | null
           external_id?: string | null
           id?: string
           image_url?: string | null
@@ -313,11 +337,25 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "products_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "product_overview"
+            referencedColumns: ["brand_id"]
+          },
+          {
             foreignKeyName: "products_category_id_fkey"
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "product_overview"
+            referencedColumns: ["category_id"]
           },
         ]
       }
@@ -387,26 +425,32 @@ export type Database = {
           error: string | null
           finished_at: string | null
           id: number
+          provider: string
           records_updated: number
           started_at: string
           status: Database["public"]["Enums"]["sync_status"]
+          trigger: string
         }
         ComputedFields: never
         Insert: {
           error?: string | null
           finished_at?: string | null
           id?: never
+          provider?: string
           records_updated?: number
           started_at?: string
           status?: Database["public"]["Enums"]["sync_status"]
+          trigger?: string
         }
         Update: {
           error?: string | null
           finished_at?: string | null
           id?: never
+          provider?: string
           records_updated?: number
           started_at?: string
           status?: Database["public"]["Enums"]["sync_status"]
+          trigger?: string
         }
         Relationships: []
       }
@@ -440,17 +484,65 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      category_index_daily: {
+        Row: {
+          category_name: string | null
+          category_slug: string | null
+          index_value: number | null
+          recorded_on: string | null
+        }
+        ComputedFields: never
+        Relationships: []
+      }
+      market_index_daily: {
+        Row: {
+          index_value: number | null
+          product_count: number | null
+          recorded_on: string | null
+        }
+        ComputedFields: never
+        Relationships: []
+      }
+      product_overview: {
+        Row: {
+          brand_id: string | null
+          brand_name: string | null
+          brand_slug: string | null
+          category_id: string | null
+          category_name: string | null
+          category_slug: string | null
+          change_1y_pct: number | null
+          change_30d_pct: number | null
+          change_7d_pct: number | null
+          color: string | null
+          description: string | null
+          id: string | null
+          image_url: string | null
+          latest_price: number | null
+          latest_recorded_on: string | null
+          material: string | null
+          name: string | null
+          premium_pct: number | null
+          release_date: string | null
+          retail_price: number | null
+          search: unknown
+          slug: string | null
+        }
+        ComputedFields: never
+        Relationships: []
+      }
     }
     Functions: {
+      has_admin_access: { Args: Record<PropertyKey, never>; Returns: boolean }
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean }
+      refresh_trend_snapshots: { Args: { weeks?: number }; Returns: number }
     }
     Enums: {
       article_status: "draft" | "published"
       source_type: "article" | "report" | "social" | "other"
       sync_status: "running" | "success" | "failed"
       trend_dimension: "color" | "material" | "category"
-      user_role: "admin" | "viewer"
+      user_role: "admin" | "viewer" | "demo"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -579,7 +671,7 @@ export const Constants = {
       source_type: ["article", "report", "social", "other"],
       sync_status: ["running", "success", "failed"],
       trend_dimension: ["color", "material", "category"],
-      user_role: ["admin", "viewer"],
+      user_role: ["admin", "viewer", "demo"],
     },
   },
 } as const

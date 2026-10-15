@@ -2,23 +2,8 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import {
-  ActivityIcon,
-  ChevronsUpDownIcon,
-  LogOutIcon,
-  UserIcon,
-} from "lucide-react"
+import { ActivityIcon } from "lucide-react"
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import {
   Sidebar,
   SidebarContent,
@@ -33,6 +18,8 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { UserMenu } from "@/components/layout/user-menu"
+import type { Viewer } from "@/lib/auth"
 import {
   adminNav,
   isActivePath,
@@ -80,7 +67,7 @@ function NavSection({
   )
 }
 
-export function AppSidebar() {
+export function AppSidebar({ viewer }: { viewer: Viewer | null }) {
   const pathname = usePathname()
 
   return (
@@ -113,40 +100,7 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <NavLink item={settingsNav} pathname={pathname} />
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger render={<SidebarMenuButton size="lg" />}>
-                <Avatar className="size-8 rounded-lg">
-                  <AvatarFallback className="rounded-lg">DA</AvatarFallback>
-                </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">Demo Admin</span>
-                  <span className="truncate text-xs text-muted-foreground">
-                    admin@trendscope.dev
-                  </span>
-                </div>
-                <ChevronsUpDownIcon className="ml-auto" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                side="right"
-                align="end"
-                className="min-w-56"
-              >
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel>Signed in as Admin</DropdownMenuLabel>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem render={<Link href="/settings" />}>
-                  <UserIcon />
-                  Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem disabled>
-                  <LogOutIcon />
-                  Log out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
+          <UserMenu viewer={viewer} />
         </SidebarMenu>
       </SidebarFooter>
       <SidebarRail />

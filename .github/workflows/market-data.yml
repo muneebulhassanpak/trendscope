@@ -1,0 +1,41 @@
+name: Market data
+
+# Daily market data sync against the production project (catalog, prices,
+# trend snapshots). Run manually with "seed" to (re)create the demo account
+# and editorial content.
+on:
+  schedule:
+    - cron: "15 3 * * *"
+  workflow_dispatch:
+    inputs:
+      seed:
+        description: "Also seed demo account and editorial content"
+        type: boolean
+        default: false
+
+concurrency:
+  group: market-data
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Sync market data
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+      DEMO_USER_EMAIL: ${{ secrets.DEMO_USER_EMAIL }}
+      DEMO_USER_PASSWORD: ${{ secrets.DEMO_USER_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Seed demo content
+        if: ${{ inputs.seed }}
+        run: npm run data:seed
+      - name: Sync market data
+        run: npm run data:sync -- --schedule

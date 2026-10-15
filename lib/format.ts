@@ -1,0 +1,89 @@
+const currency = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 0,
+})
+
+const currencyPrecise = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+})
+
+const compactCurrency = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  notation: "compact",
+  maximumFractionDigits: 1,
+})
+
+const percent = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 1,
+  minimumFractionDigits: 1,
+  signDisplay: "exceptZero",
+})
+
+const number = new Intl.NumberFormat("en-US")
+
+const shortDate = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  timeZone: "UTC",
+})
+
+const longDate = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+  timeZone: "UTC",
+})
+
+const dateTime = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  hour: "numeric",
+  minute: "2-digit",
+  timeZone: "UTC",
+  timeZoneName: "short",
+})
+
+/** Prices under $1,000 show cents; larger prices are rounded. */
+export function formatPrice(value: number | null | undefined) {
+  if (value == null) return "—"
+  return value < 1000 ? currencyPrecise.format(value) : currency.format(value)
+}
+
+export function formatCompactPrice(value: number | null | undefined) {
+  if (value == null) return "—"
+  return compactCurrency.format(value)
+}
+
+/** Signed percentage, e.g. +4.2% / −1.0%. */
+export function formatPercent(value: number | null | undefined) {
+  if (value == null) return "—"
+  return `${percent.format(value)}%`
+}
+
+export function formatNumber(value: number | null | undefined) {
+  if (value == null) return "—"
+  return number.format(value)
+}
+
+/** Accepts ISO dates (YYYY-MM-DD) or timestamps; renders in UTC. */
+export function formatShortDate(value: string | Date) {
+  return shortDate.format(toDate(value))
+}
+
+export function formatDate(value: string | Date) {
+  return longDate.format(toDate(value))
+}
+
+export function formatDateTime(value: string | Date) {
+  return dateTime.format(toDate(value))
+}
+
+function toDate(value: string | Date) {
+  if (value instanceof Date) return value
+  return new Date(value.length === 10 ? `${value}T00:00:00Z` : value)
+}
