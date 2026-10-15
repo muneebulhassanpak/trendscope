@@ -1,4 +1,11 @@
+import { existsSync } from "node:fs"
+
 import { defineConfig, devices } from "@playwright/test"
+
+// Test helpers read seeded credentials (ADMIN_EMAIL, ...) from the local env.
+for (const file of [".env.local", ".env"]) {
+  if (existsSync(file)) process.loadEnvFile(file)
+}
 
 const isCI = Boolean(process.env.CI)
 const port = Number(process.env.E2E_PORT ?? 3000)
