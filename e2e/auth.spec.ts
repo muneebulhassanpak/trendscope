@@ -18,10 +18,11 @@ test("invalid credentials show a generic error", async ({ page }) => {
   await expect(page.getByText("Invalid email or password.")).toBeVisible()
 })
 
-test("open redirects via ?next are ignored", async ({ page }) => {
+test("open redirects via ?next are ignored", async ({ page, baseURL }) => {
   await page.goto("/login?next=//evil.example.com")
   await page.getByRole("button", { name: "Explore as demo admin" }).click()
-  await expect(page).toHaveURL(/localhost:3000\/admin\/observations$/)
+  await expect(page).toHaveURL(/\/admin\/observations$/)
+  expect(new URL(page.url()).host).toBe(new URL(baseURL!).host)
 })
 
 test("demo admin can browse the admin area read-only and sign out", async ({
