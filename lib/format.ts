@@ -26,6 +26,17 @@ const percent = new Intl.NumberFormat("en-US", {
 
 const number = new Intl.NumberFormat("en-US")
 
+const score = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 1,
+  minimumFractionDigits: 1,
+})
+
+const scoreChange = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 1,
+  minimumFractionDigits: 1,
+  signDisplay: "exceptZero",
+})
+
 const shortDate = new Intl.DateTimeFormat("en-US", {
   month: "short",
   day: "numeric",
@@ -68,6 +79,18 @@ export function formatPercent(value: number | null | undefined) {
 export function formatNumber(value: number | null | undefined) {
   if (value == null) return "—"
   return number.format(value)
+}
+
+/** Trend score on its 0–100 scale, e.g. 62.4. */
+export function formatScore(value: number | null | undefined) {
+  if (value == null) return "—"
+  return score.format(value)
+}
+
+/** Signed change in trend score points (not percent), e.g. +3.2 pts. */
+export function formatScoreChange(value: number | null | undefined) {
+  if (value == null) return "—"
+  return `${scoreChange.format(value)} pts`
 }
 
 /** Accepts ISO dates (YYYY-MM-DD) or timestamps; renders in UTC. */
